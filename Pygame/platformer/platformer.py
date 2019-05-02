@@ -23,13 +23,13 @@ class Player(pygame.sprite.Sprite):
         self.l_jump = 0
         self.change_x = 0
         self.change_y = 0
+        # set the image for the player
         self.sprite_sheet = sprite
         self.walking_frames_r = images.right_walk(self.sprite_sheet)
         self.walking_frames_l = images.left_walk(self.sprite_sheet)
         # What direction is the player facing?
         self.direction = "R"
         self.score = 0
-        self.lasers = []
 
         # List of sprites we can bump against
         level = None
@@ -268,7 +268,7 @@ class game():
             for bullet in bullet_list:
         
                 # See if it hit a block
-                block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, True)
+                block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, False)
         
                 # For each block hit, remove the bullet and add to the score
                 for block in block_hit_list:
