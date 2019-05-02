@@ -163,6 +163,23 @@ class Player(pygame.sprite.Sprite):
     def shoot_laser(self):
         pass
 
+class Bullet(pygame.sprite.Sprite):
+    """ This class represents the bullet . """
+    def __init__(self, direction):
+        # Call the parent class (Sprite) constructor
+        super().__init__()
+        self.direction = direction
+        self.image = pygame.Surface([10, 4])
+        self.image.fill(constants.BLACK)
+        self.rect = self.image.get_rect()
+ 
+    def update(self):
+        """ Move the bullet. """  
+        if self.direction == 'L':
+            self.rect.x -= 6  
+        elif self.direction == 'R':
+            self.rect.x += 6
+
 class game():
 
     def main():
@@ -170,6 +187,7 @@ class game():
 
         """ Main Program """
         pygame.init()
+
 
         # Set the height and width of the screen
         size = [constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT]
@@ -179,8 +197,10 @@ class game():
 
 
         # Create the player
-        player = Player(SpriteSheet('platformer/sprite_base_addon_2012_12_14.png'))
-
+        player = Player(SpriteSheet('sprite_base_addon_2012_12_14.png'))
+        
+        # Create bullet list
+        bullet_list = pygame.sprite.Group()
 
 
         # Create all the levels
@@ -212,26 +232,50 @@ class game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
-                if event.type == None:
+                elif event.type == None:
                     player.idle()
-                if event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         player.go_left()
-                    if event.key == pygame.K_RIGHT:
+                    elif event.key == pygame.K_RIGHT:
                         player.go_right()
-                    if event.key == pygame.K_UP or event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_UP or event.key == pygame.K_SPACE:
                         player.jump()
 
-                if event.type == pygame.KEYUP:
+                elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT and player.change_x < 0:
                         player.stop()
-                    if event.key == pygame.K_RIGHT and player.change_x > 0:
+                    elif event.key == pygame.K_RIGHT and player.change_x > 0:
                         player.stop()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # Fire a bullet if the user clicks the mouse button
+                    bullet = Bullet(player.direction)
+                    # Set the bullet so it is where the player is
+                    bullet.rect.x = player.rect.x + 10
+                    bullet.rect.y = player.rect.y + 10
+            
+                    # Add the bullet to the lists
+                    active_sprite_list.add(bullet)
+                    bullet_list.add(bullet)
 
             # Update the player.
             active_sprite_list.update()
             # Update items in the level
             current_level.update()
+
+            # Calculate mechanics for each bullet
+            for bullet in bullet_list:
+        
+                # See if it hit a block
+                block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, True)
+        
+                # For each block hit, remove the bullet and add to the score
+                for block in block_hit_list:
+                    bullet_list.remove(bullet)
+                    active_sprite_list.remove(bullet)
+                    player.score += 1
+                    print(player.score)
 
             # If the player gets near the right side, shift the world left (-x)
             if player.rect.right >= 500:

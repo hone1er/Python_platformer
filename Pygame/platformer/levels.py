@@ -9,7 +9,7 @@ class Mushroom(pygame.sprite.Sprite):
     def __init__(self, width, height):
         super().__init__()
         self.image = pygame.Surface([width, height])
-        self.image = pygame.image.load('platformer/png/Object/Mushroom_1.png')
+        self.image = pygame.image.load('png/Object/Mushroom_1.png')
         self.rect = self.image.get_rect()
 
 class Platform(pygame.sprite.Sprite):
@@ -22,7 +22,7 @@ class Platform(pygame.sprite.Sprite):
         super().__init__()
 
         self.image = pygame.Surface([width, height])
-        self.image = pygame.image.load('platformer/png/Tiles/14.png')
+        self.image = pygame.image.load('png/Tiles/14.png')
         self.rect = self.image.get_rect()
 
 
@@ -37,9 +37,8 @@ class Level():
         self.platform_list = pygame.sprite.Group()
         self.platform_scene = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
-
-
         self.player = player
+    
 
         # How far this world has been scrolled left/right
         self.world_shift = 0
@@ -180,19 +179,19 @@ class Level_01(Level):
                       ]
 
 
-        tile_dict = {pygame.image.load('platformer/png/Tiles/1.png'):ground_tiles,
-                     pygame.image.load('platformer/png/Tiles/13.png'): left_tiles,
-                     pygame.image.load('platformer/png/Tiles/14.png'): center_tiles,
-                     pygame.image.load('platformer/png/Tiles/15.png'): right_tiles,
-                     pygame.image.load('platformer/png/Tiles/10.png'): end_tile_1,
-                     pygame.image.load('platformer/png/Tiles/8.png'): end_tile_2
+        tile_dict = {pygame.image.load('png/Tiles/1.png'):ground_tiles,
+                     pygame.image.load('png/Tiles/13.png'): left_tiles,
+                     pygame.image.load('png/Tiles/14.png'): center_tiles,
+                     pygame.image.load('png/Tiles/15.png'): right_tiles,
+                     pygame.image.load('png/Tiles/10.png'): end_tile_1,
+                     pygame.image.load('png/Tiles/8.png'): end_tile_2
                      }
 
-        object_dict = {pygame.image.load('platformer/png/Object/Tree_2.png'): tree_1,
-                       pygame.image.load('platformer/png/Object/sign_2.png'): sign}
+        object_dict = {pygame.image.load('png/Object/Tree_2.png'): tree_1,
+                       pygame.image.load('png/Object/sign_2.png'): sign}
 
-        coin_dict = {pygame.image.load('platformer/png/Object/Mushroom_1.png'): mushroom_1,
-                       pygame.image.load('platformer/png/Object/Mushroom_2.png'): mushroom_2,}
+        coin_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
+                       pygame.image.load('png/Object/Mushroom_2.png'): mushroom_2,}
 
         def add_item(tiles, image, holder, kind):
             # Go through the array above and add platforms
@@ -253,6 +252,6 @@ class Level_02(Level):
                 block.image = image
                 self.platform_list.add(block)
 
-        add_item(center_tiles,  pygame.image.load('platformer/png/Tiles/14.png'), Platform)
-        add_item(left_tiles, pygame.image.load('platformer/png/Tiles/13.png'), Platform)
+        add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), Platform)
+        add_item(left_tiles, pygame.image.load('png/Tiles/13.png'), Platform)
 
