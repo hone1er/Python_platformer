@@ -206,7 +206,8 @@ class Level_01(Level):
                 block.player = self.player
                 block.image = image
                 holder.add(block)
-            # got through tile_dict and add objects
+            
+        # got through tile_dict and add objects
         # Add platforms
         for tile in tile_dict:
             add_item(tile_dict[tile], tile, self.platform_list, Platform)

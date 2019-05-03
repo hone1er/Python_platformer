@@ -95,6 +95,7 @@ class Player(pygame.sprite.Sprite):
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:
+            self.change_y -= 1
             if self.score > 25:
                 self.score -= 25
             else:
@@ -188,9 +189,9 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         """ Move the bullet. """  
         if self.direction == 'L':
-            self.rect.x -= 6  
+            self.rect.x -= 8  
         elif self.direction == 'R':
-            self.rect.x += 6
+            self.rect.x += 8
 
 ################################################################
 ############### Class to respresent the enemies ################

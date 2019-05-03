@@ -90,8 +90,11 @@ class game():
             current_level.update()
 
             # Calculate mechanics for each bullet
+            width = constants.SCREEN_WIDTH
             for bullet in player.bullet_list:
-        
+                if bullet.rect.x >= player.rect.x + width/1.2 or bullet.rect.x <= player.rect.x - width/1.2:
+                    active_sprite_list.remove(bullet)
+                    player.bullet_list.remove(bullet)
                 # See if it hit a block
                 block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, False)
                 enemy_hit_list = pygame.sprite.spritecollide(bullet, player.level.enemy_list, True)
@@ -119,6 +122,9 @@ class game():
                     crony.rect.x -= diff
                     crony.path[0] -= diff
                     crony.path[1] -= diff
+            # shift any bullets
+                for bullet in player.bullet_list:
+                    bullet.rect.x -= diff
                 current_level.shift_world(-diff)
 
             # If the player gets near the left side, shift the world right (+x)
@@ -131,6 +137,8 @@ class game():
                     crony.rect.x += diff
                     crony.path[0] += diff
                     crony.path[1] += diff
+                for bullet in player.bullet_list:
+                    bullet.rect.x += diff
                 current_level.shift_world(diff)
 
             # If the player gets to the end of the level, go to the next level
@@ -161,6 +169,7 @@ class game():
 
             # Go ahead and update the screen with what we've drawn.
             pygame.display.update()
+            print(active_sprite_list)
 
         # Be IDLE friendly. If you forget this line, the program will 'hang'
         # on exit.
