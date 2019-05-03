@@ -95,11 +95,12 @@ class Player(pygame.sprite.Sprite):
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:
-            self.change_y -= 1
             if self.score > 25:
                 self.score -= 25
-            else:
+            if self.score < 25:
                 self.score = 0
+            if self.rect.right -2 == enemy.rect.left:
+                self.change_x -= 2            
 
         coin_hit_list = pygame.sprite.spritecollide(self, self.level.collectable_list, True)
         for coin in coin_hit_list:

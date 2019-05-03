@@ -21,13 +21,15 @@ class game():
 
         pygame.display.set_caption("Side-scrolling Platformer")
 
+        crony = Enemy(450, 475, 20, 20, 600)
         # Create the player
         player = Player(SpriteSheet('catman.png'))
-        
         # Create all the levels
         level_list = []
         level_list.append(levels.Level_01(player))
         level_list.append(levels.Level_02(player))
+
+
 
         # Set the current level
         current_level_no = 0
@@ -35,13 +37,12 @@ class game():
 
         active_sprite_list = pygame.sprite.Group()
         player.level = current_level
-
+        player.level.enemy_list.add(crony)
         player.rect.x = 340
         player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - 500
         active_sprite_list.add(player)
 
-        crony = Enemy(450, 475, 20, 20, 600)
-        player.level.enemy_list.add(crony)
+
         
 
         # Loop until the user clicks the close button.
@@ -88,6 +89,7 @@ class game():
             active_sprite_list.update()
             # Update items in the level
             current_level.update()
+
 
             # Calculate mechanics for each bullet
             width = constants.SCREEN_WIDTH
@@ -169,7 +171,7 @@ class game():
 
             # Go ahead and update the screen with what we've drawn.
             pygame.display.update()
-            print(active_sprite_list)
+            print(crony.rect.left)
 
         # Be IDLE friendly. If you forget this line, the program will 'hang'
         # on exit.
