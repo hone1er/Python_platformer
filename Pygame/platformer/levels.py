@@ -1,5 +1,6 @@
 import pygame
 import constants
+from characters import Enemy
 
 
 
