@@ -21,14 +21,9 @@ class game():
 
         pygame.display.set_caption("Side-scrolling Platformer")
 
-
         # Create the player
         player = Player(SpriteSheet('catman.png'))
         
-        # Create bullet list
-        bullet_list = pygame.sprite.Group()
-
-
         # Create all the levels
         level_list = []
         level_list.append(levels.Level_01(player))
@@ -81,7 +76,7 @@ class game():
                 
                         # Add the bullet to the lists
                         active_sprite_list.add(bullet)
-                        bullet_list.add(bullet)
+                        player.bullet_list.add(bullet)
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT and player.change_x < 0:
@@ -97,7 +92,7 @@ class game():
             current_level.update()
 
             # Calculate mechanics for each bullet
-            for bullet in bullet_list:
+            for bullet in player.bullet_list:
         
                 # See if it hit a block
                 block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, False)
@@ -105,10 +100,10 @@ class game():
         
                 # For each block hit, remove the bullet and add to the score
                 for block in block_hit_list:
-                    bullet_list.remove(bullet)
+                    player.bullet_list.remove(bullet)
                     active_sprite_list.remove(bullet)
                 for enemy in enemy_hit_list:
-                    bullet_list.remove(bullet)
+                    player.bullet_list.remove(bullet)
                     active_sprite_list.remove(bullet)
                     player.level.enemy_list.remove(enemy)
 

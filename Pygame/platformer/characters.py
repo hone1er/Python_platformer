@@ -3,7 +3,9 @@ import pygame
 import constants
 import images
 
-
+################################################################
+############ Class to respresent the player's sprite ###########
+################################################################
 class Player(pygame.sprite.Sprite):
     """ This class represents the sprite that the player
     controls. """
@@ -29,6 +31,9 @@ class Player(pygame.sprite.Sprite):
         # What direction is the player facing?
         self.direction = "R"
         self.score = 0
+
+        # list of bullets shot
+        self.bullet_list = pygame.sprite.Group()
 
         # List of sprites we can bump against
         level = None
@@ -165,12 +170,11 @@ class Player(pygame.sprite.Sprite):
         """ Called when the user lets off the keyboard. """
         self.change_x = 0
 
-    def shoot_laser(self):
-        pass
 
-############################################
-# Class to respresent the bullet/projectile#
-############################################
+
+###############################################################
+########## Class to respresent the bullet/projectile###########
+###############################################################
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
     def __init__(self, direction):
@@ -188,9 +192,9 @@ class Bullet(pygame.sprite.Sprite):
         elif self.direction == 'R':
             self.rect.x += 6
 
-###########################################
-######Class to respresent the enemies######
-###########################################
+################################################################
+############### Class to respresent the enemies ################
+################################################################
 class Enemy(pygame.sprite.Sprite):
     """ This class represents the enemy . """
     def __init__(self, x, y, width, height, end):
