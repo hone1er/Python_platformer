@@ -92,7 +92,7 @@ class game():
             # Calculate mechanics for each bullet
             width = constants.SCREEN_WIDTH
             for bullet in player.bullet_list:
-                if bullet.rect.x >= player.rect.x + width/1.2 or bullet.rect.x <= player.rect.x - width/1.2:
+                if bullet.rect.x >= player.rect.x + width/1.15 or bullet.rect.x <= player.rect.x - width/1.15:
                     active_sprite_list.remove(bullet)
                     player.bullet_list.remove(bullet)
                 # See if it hit a block
