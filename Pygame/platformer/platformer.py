@@ -119,6 +119,7 @@ class game():
             if player.rect.right >= 500:
                 diff = player.rect.right - 500
                 player.rect.right = 500
+            # Shift the enemies with the world
                 for crony in player.level.enemy_list:                    
                     crony.end -= diff
                     crony.rect.x -= diff
@@ -127,10 +128,10 @@ class game():
                 current_level.shift_world(-diff)
 
             # If the player gets near the left side, shift the world right (+x)
-            
             if player.rect.left <= 120:
                 diff = 120 - player.rect.left
                 player.rect.left = 120
+            # Shift the enemies with the world
                 for crony in player.level.enemy_list:                    
                     crony.end += diff
                     crony.rect.x += diff
