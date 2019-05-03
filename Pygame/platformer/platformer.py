@@ -44,14 +44,12 @@ class game():
         player.level.enemy_list.add(crony)
         
 
-
-
-
         # Loop until the user clicks the close button.
         done = False
 
         # Used to manage how fast the screen updates
         clock = pygame.time.Clock()
+
 
         # -------- Main Program Loop -----------
         while not done:
@@ -106,6 +104,7 @@ class game():
                     player.bullet_list.remove(bullet)
                     active_sprite_list.remove(bullet)
                     player.level.enemy_list.remove(enemy)
+                    player.score += 10
 
 
 
@@ -153,7 +152,8 @@ class game():
             font = pygame.font.SysFont(None, 25)
             text = font.render(f"Score: {player.score}", True, constants.BLACK)
             screen.blit(text, (10, 10))
-            crony.draw(screen)
+            for crony in player.level.enemy_list:
+                crony.draw(screen)
             # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
 
             # Limit to 60 frames per second
