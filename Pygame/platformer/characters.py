@@ -88,10 +88,16 @@ class Player(pygame.sprite.Sprite):
             #if isinstance(block, MovingPlatform):
              #   self.rect.x += block.change_x
 
-        coin_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, True)
+        enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
+        for enemy in enemy_hit_list:
+            if self.score > 25:
+                self.score -= 25
+            else:
+                self.score = 0
+
+        coin_hit_list = pygame.sprite.spritecollide(self, self.level.collectable_list, True)
         for coin in coin_hit_list:
             self.score += 25
-
 
  
     def calc_grav(self):

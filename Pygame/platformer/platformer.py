@@ -4,7 +4,7 @@ import constants
 import images
 import levels
 from characters import Player, Enemy, Bullet
-
+import os
 
 class game():
 
@@ -23,7 +23,7 @@ class game():
 
 
         # Create the player
-        player = Player(SpriteSheet('sprite_base_addon_2012_12_14.png'))
+        player = Player(SpriteSheet('catman.png'))
         
         # Create bullet list
         bullet_list = pygame.sprite.Group()
@@ -45,8 +45,8 @@ class game():
         player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - 500
         active_sprite_list.add(player)
 
-        crony = Enemy(450, 450, 20, 20, 600)
-        active_sprite_list.add(crony)
+        crony = Enemy(450, 475, 20, 20, 600)
+        player.level.enemy_list.add(crony)
         
 
 
@@ -101,31 +101,41 @@ class game():
         
                 # See if it hit a block
                 block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, False)
+                enemy_hit_list = pygame.sprite.spritecollide(bullet, player.level.enemy_list, True)
         
                 # For each block hit, remove the bullet and add to the score
                 for block in block_hit_list:
                     bullet_list.remove(bullet)
                     active_sprite_list.remove(bullet)
+                for enemy in enemy_hit_list:
+                    bullet_list.remove(bullet)
+                    active_sprite_list.remove(bullet)
+                    player.level.enemy_list.remove(enemy)
+
+
 
 
             # If the player gets near the right side, shift the world left (-x)
             if player.rect.right >= 500:
                 diff = player.rect.right - 500
                 player.rect.right = 500
-                crony.end -= diff
-                crony.rect.x -= diff
-                crony.path[0] -= diff
-                crony.path[1] -= diff
+                for crony in player.level.enemy_list:                    
+                    crony.end -= diff
+                    crony.rect.x -= diff
+                    crony.path[0] -= diff
+                    crony.path[1] -= diff
                 current_level.shift_world(-diff)
 
             # If the player gets near the left side, shift the world right (+x)
+            
             if player.rect.left <= 120:
                 diff = 120 - player.rect.left
                 player.rect.left = 120
-                crony.end += diff
-                crony.rect.x += diff
-                crony.path[0] += diff
-                crony.path[1] += diff
+                for crony in player.level.enemy_list:                    
+                    crony.end += diff
+                    crony.rect.x += diff
+                    crony.path[0] += diff
+                    crony.path[1] += diff
                 current_level.shift_world(diff)
 
             # If the player gets to the end of the level, go to the next level

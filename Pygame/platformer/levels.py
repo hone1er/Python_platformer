@@ -38,6 +38,7 @@ class Level():
         self.platform_list = pygame.sprite.Group()
         self.platform_scene = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
+        self.collectable_list = pygame.sprite.Group()
         self.player = player
     
 
@@ -50,6 +51,7 @@ class Level():
         self.platform_list.update()
         self.platform_scene.update()
         self.enemy_list.update()
+        self.collectable_list.update()
 
 
     def draw(self, screen):
@@ -62,6 +64,7 @@ class Level():
         self.platform_list.draw(screen)
         self.enemy_list.draw(screen)
         self.platform_scene.draw(screen)
+        self.collectable_list.draw(screen)
 
 
     def shift_world(self, shift_x):
@@ -76,8 +79,8 @@ class Level():
         for platform in self.platform_list:
             platform.rect.x += shift_x
 
-        for enemy in self.enemy_list:
-            enemy.rect.x += shift_x
+        for collectable in self.collectable_list:
+            collectable.rect.x += shift_x
 
         for scenery in self.platform_scene:
             scenery.rect.x += shift_x
@@ -147,8 +150,8 @@ class Level_01(Level):
 
                        [210, 70, 2300, 350]
                         ]
-
-        end_tile_1 = [#Wall at start of level
+        # Wall at start of level
+        end_tile_1 = [
                      [210, 70, -125, 560],
                      [210, 70, -125, 320],
                      [210, 70, -125, 80],
@@ -156,8 +159,8 @@ class Level_01(Level):
                      [210, 80, 1500, 255]
 
                       ]
-
-        end_tile_2 =  [#Wall at start of level
+        # Wall at start of level continued
+        end_tile_2 =  [
                     [210, 70, -125, 440],
                     [210, 70, -125, 200],
                     [210, 70, -125, 0],
@@ -180,7 +183,7 @@ class Level_01(Level):
                       ]
 
 
-        tile_dict = {pygame.image.load('png/Tiles/1.png'):ground_tiles,
+        tile_dict = {pygame.image.load('png/Tiles/1.png'): ground_tiles,
                      pygame.image.load('png/Tiles/13.png'): left_tiles,
                      pygame.image.load('png/Tiles/14.png'): center_tiles,
                      pygame.image.load('png/Tiles/15.png'): right_tiles,
@@ -191,7 +194,7 @@ class Level_01(Level):
         object_dict = {pygame.image.load('png/Object/Tree_2.png'): tree_1,
                        pygame.image.load('png/Object/sign_2.png'): sign}
 
-        coin_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
+        collectable_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
                        pygame.image.load('png/Object/Mushroom_2.png'): mushroom_2,}
 
         def add_item(tiles, image, holder, kind):
@@ -213,8 +216,8 @@ class Level_01(Level):
             add_item(object_dict[objects], objects, self.platform_scene, Platform)
 
         # Add collectables
-        for coin in coin_dict:
-            add_item(coin_dict[coin], coin, self.enemy_list, Mushroom)
+        for collectable in collectable_dict:
+            add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
 
 
 3
