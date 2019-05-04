@@ -92,12 +92,18 @@ class Level_01(Level):
 
     def __init__(self, player):
         """ Create level 1. """
-
+        
         # Call the parent constructor
         Level.__init__(self, player)
 
         self.level_limit = -2000
 
+        crony = Enemy(305, 475, 20, 20, 600)
+        crony1 = Enemy(750, 375, 20, 20, 1075)
+        crony2 = Enemy(1310, 475, 20, 20, 1650)
+        self.enemy_list.add(crony)
+        self.enemy_list.add(crony1)
+        self.enemy_list.add(crony2)
         # Array with width, height, x, and y of platform. Tile Dictionary values
         ground_tiles = [[210, 70, 105, 560],
 
@@ -233,6 +239,7 @@ class Level_02(Level):
         Level.__init__(self, player)
 
         self.level_limit = -1000
+
 
         # Array with type of platform, and x, y location of the platform.
         left_tiles = [[210, 30, 0, 570],
