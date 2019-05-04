@@ -84,6 +84,20 @@ class Level():
 
         for scenery in self.platform_scene:
             scenery.rect.x += shift_x
+    
+    def add_item(tiles, image, objectList, objType):
+        # Go through the array above and add platforms
+        for tile in tiles:                                  # tiles is a dictionary containing {image: object}
+            obj = objType(tile[0], tile[1])                 # objectType(width, height)
+            obj.rect.x, obj.rect.y  = tile[2], tile[3]      # objectType.x, objType.y
+            obj.image = image                               # object image
+            objectList.add(obj)                             # add object to objectList
+    
+    def add_enemy(cronies, objectList):
+        # Go through the array above and add platforms
+        for crony in cronies:                          
+            obj = Enemy(crony[0],crony[1],crony[2],crony[3], crony[4])  
+            objectList.add(obj)  
 
 
 # Create platforms for the level
@@ -98,13 +112,16 @@ class Level_01(Level):
 
         self.level_limit = -2000
 
-        crony = Enemy(305, 475, 20, 20, 600)
-        crony1 = Enemy(750, 375, 20, 20, 1075)
-        crony2 = Enemy(1310, 475, 20, 20, 1650)
-        self.enemy_list.add(crony)
-        self.enemy_list.add(crony1)
-        self.enemy_list.add(crony2)
-        # Array with width, height, x, and y of platform. Tile Dictionary values
+# cronies list....[startX, Y, width, height, endX]
+#####################################################################################
+        cronies = [
+            [305, 475, 20, 20, 600],
+            [750, 375, 20, 20, 1075],
+            [1310, 475, 20, 20, 1650]]
+######################################################################################
+
+# Array with width, height, x, and y of platforms. Tile Dictionary values
+######################################################################################
         ground_tiles = [[210, 70, 105, 560],
 
                         [210, 70, 0, 560],
@@ -173,7 +190,8 @@ class Level_01(Level):
 
                     [210, 80, 1300, 200],
                         ]
-        # Object dictionary values
+# Collectable/scenery dictionary values
+###################################################################################
         tree_1 = [[210, 70, 30, 259],
 
                   [210, 70, 850, 100]
@@ -188,7 +206,8 @@ class Level_01(Level):
         mushroom_2 = [[0, 0, 1050, 520]
                       ]
 
-
+# Dictionaries with images: objects
+#####################################################################################
         tile_dict = {pygame.image.load('png/Tiles/1.png'): ground_tiles,
                      pygame.image.load('png/Tiles/13.png'): left_tiles,
                      pygame.image.load('png/Tiles/14.png'): center_tiles,
@@ -203,30 +222,22 @@ class Level_01(Level):
         collectable_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
                        pygame.image.load('png/Object/Mushroom_2.png'): mushroom_2,}
 
-        def add_item(tiles, image, holder, kind):
-            # Go through the array above and add platforms
-            for platform in tiles:
-                block = kind(platform[0], platform[1])
-                block.rect.x = platform[2]
-                block.rect.y = platform[3]
-                block.player = self.player
-                block.image = image
-                holder.add(block)
-            
+
         # got through tile_dict and add objects
         # Add platforms
         for tile in tile_dict:
-            add_item(tile_dict[tile], tile, self.platform_list, Platform)
+            Level.add_item(tile_dict[tile], tile, self.platform_list, Platform)
 
-         # Add backround objects such as trees, bushes, and rocks.
+        # Add backround objects such as trees, bushes, and rocks.
         for objects in object_dict:
-            add_item(object_dict[objects], objects, self.platform_scene, Platform)
+            Level.add_item(object_dict[objects], objects, self.platform_scene, Platform)
 
         # Add collectables
         for collectable in collectable_dict:
-            add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
+            Level.add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
 
-
+        # add enemies
+        Level.add_enemy(cronies, self.enemy_list)
 3
 # Create platforms for the level
 class Level_02(Level):
@@ -254,16 +265,8 @@ class Level_02(Level):
                       [210, 30, 1064, 520],
                       [210, 30, 1184, 280]
                       ]
-        def add_item(tiles, image, kind):
-            # Go through the array above and add platforms
-            for platform in tiles:
-                block = kind(platform[0], platform[1])
-                block.rect.x = platform[2]
-                block.rect.y = platform[3]
-                block.player = self.player
-                block.image = image
-                self.platform_list.add(block)
 
-        add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), Platform)
-        add_item(left_tiles, pygame.image.load('png/Tiles/13.png'), Platform)
+
+        Level.add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), self.platform_list, Platform)
+        Level.add_item(left_tiles, pygame.image.load('png/Tiles/13.png'), self.platform_list, Platform)
 

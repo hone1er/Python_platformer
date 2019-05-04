@@ -101,7 +101,7 @@ class Player(pygame.sprite.Sprite):
         for enemy in enemy_hit_list:
             if self.score > 25:
                 self.score -= 25
-            if self.score < 25:
+            if self.score <= 25:
                 self.score = 0                
          
 

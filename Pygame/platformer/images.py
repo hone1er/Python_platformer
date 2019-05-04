@@ -36,7 +36,7 @@ def right_jump(sprite_sheet):
         jump_frames_r.append(image)
         a += 64
     return jump_frames_r
-
+    pass
 
 def attack(sprite_sheet):
 
