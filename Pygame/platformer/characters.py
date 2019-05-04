@@ -28,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.sprite_sheet = sprite
         self.walking_frames_r = images.right_walk(self.sprite_sheet)
         self.walking_frames_l = images.left_walk(self.sprite_sheet)
+        self.jump_frames = images.right_jump(self.sprite_sheet)
         # What direction is the player facing?
         self.direction = "R"
         self.score = 0
@@ -57,9 +58,12 @@ class Player(pygame.sprite.Sprite):
         if self.direction == "R":
             frame = (pos // 30) % len(self.walking_frames_r)
             self.image = self.walking_frames_r[frame].convert_alpha()
-        else:
+        elif self.direction == "L":
             frame = (pos // 30) % len(self.walking_frames_l)
             self.image = self.walking_frames_l[frame].convert_alpha()
+
+
+        
  
         # See if we hit anything
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
@@ -98,9 +102,8 @@ class Player(pygame.sprite.Sprite):
             if self.score > 25:
                 self.score -= 25
             if self.score < 25:
-                self.score = 0
-            if self.rect.right -2 == enemy.rect.left:
-                self.change_x -= 2            
+                self.score = 0                
+         
 
         coin_hit_list = pygame.sprite.spritecollide(self, self.level.collectable_list, True)
         for coin in coin_hit_list:
@@ -119,7 +122,6 @@ class Player(pygame.sprite.Sprite):
             self.change_y = self.rect.height
 
 
-
     def jump(self):
         """ Called when user hits 'jump' button. """
         # move down a bit and see if there is a platform below us.
@@ -136,11 +138,13 @@ class Player(pygame.sprite.Sprite):
         platform_side_hit_list_l = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         self.rect.x += 2
 
+
         # If it is ok to jump, set our speed upwards
         if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
             self.change_y = -10
             self.r_jump = 0
             self.l_jump = 0
+
 
         # wall jump
         if len(platform_side_hit_list_r) > 0 and self.r_jump == 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
@@ -155,6 +159,7 @@ class Player(pygame.sprite.Sprite):
             self.change_y = -10
             self.l_jump += 1
             self.r_jump = 0
+
 
 
     # Player-controlled movement:
