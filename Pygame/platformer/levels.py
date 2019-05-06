@@ -44,7 +44,7 @@ class Level():
 
         # How far this world has been scrolled left/right
         self.world_shift = 0
-
+        self.world_shift_y = 0
     # Update everythign on this level
     def update(self):
         """ Update everything in this level."""
@@ -84,6 +84,37 @@ class Level():
 
         for scenery in self.platform_scene:
             scenery.rect.x += shift_x
+        
+        for enemy in self.enemy_list:
+            enemy.end += shift_x
+            enemy.rect.x += shift_x
+            enemy.path[0] += shift_x
+            enemy.path[1] += shift_x
+        
+        for bullet in self.player.bullet_list:
+            bullet.rect.x += shift_x
+
+    
+    def shift_world_y(self, shift_y):
+        
+        # Keep track of the shift amount
+        self.world_shift_y += shift_y
+
+        # Go through all the sprite lists and shift
+        for platform in self.platform_list:
+            platform.rect.y -= shift_y
+
+        for collectable in self.collectable_list:
+            collectable.rect.y -= shift_y
+
+        for scenery in self.platform_scene:
+            scenery.rect.y -= shift_y
+        
+        for enemy in self.enemy_list:
+            enemy.rect.y -= shift_y
+        
+        for bullet in self.player.bullet_list:
+            bullet.rect.y -= shift_y
     
     def add_item(tiles, image, objectList, objType):
         # Go through the array above and add platforms
@@ -110,7 +141,7 @@ class Level_01(Level):
         # Call the parent constructor
         Level.__init__(self, player)
 
-        self.level_limit = -2000
+        self.level_limit = -4000
 
 # cronies list....[startX, Y, width, height, endX]
 #####################################################################################
@@ -138,7 +169,7 @@ class Level_01(Level):
 
             [210, 70, 1925, 350],
 
-            [210, 70, 2700, 575]
+            [210, 70, 2700, 565]
 
                  ]
         center_tiles = [[210, 70, 425, 500],
@@ -162,8 +193,12 @@ class Level_01(Level):
                         [210, 70, 2050, 350],
                         [210, 70, 2175, 350],
 
-                        [210, 70, 2825, 575],
-                        [210, 70, 2950, 575],
+                        [210, 70, 1995, 585],
+                        [210, 70, 2100, 585],
+                        [210, 70, 2225, 585],
+
+                        [210, 70, 2825, 565],
+                        [210, 70, 2950, 565],
 
 
                       ]
@@ -171,7 +206,9 @@ class Level_01(Level):
 
         right_tiles = [[210, 70, 550, 500],
 
-                       [210, 70, 2300, 350]
+                       [210, 70, 2300, 350],
+                       [210, 70, 2350, 585],
+                       [210, 70, 3075, 565]
                         ]
         # Wall at start of level
         end_tile_1 = [
@@ -179,7 +216,10 @@ class Level_01(Level):
                      [210, 70, -125, 320],
                      [210, 70, -125, 80],
 
-                     [210, 80, 1500, 255]
+                     [210, 80, 1500, 255],
+
+                     [210, 70, 1945, 525],
+                     [210, 70, 1945, 405],
 
                       ]
         # Wall at start of level continued
@@ -268,5 +308,4 @@ class Level_02(Level):
 
 
         Level.add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), self.platform_list, Platform)
-        Level.add_item(left_tiles, pygame.image.load('png/Tiles/13.png'), self.platform_list, Platform)
-
+        Level.add_item(left_tiles, pygame.image.load('png/Tiles/13.png'), self.platform_list, Platform)        
