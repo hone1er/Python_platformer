@@ -112,10 +112,12 @@ class game():
 
             ydiff = 0
             diff = 0
+            # if the player gets near the top/bottom, shift the world down/up (ydiff)
             if player.rect.top <= 20:
                 ydiff = player.rect.top - 20
                 player.rect.top = 20
                 current_level.shift_world_y(ydiff)
+
             if player.rect.bottom >= 550:
                 ydiff = player.rect.bottom - 550
                 player.rect.bottom = 550
@@ -126,14 +128,12 @@ class game():
                 player.rect.right = 500
                 current_level.shift_world(-diff)
 
-
             # If the player gets near the left side, shift the world right (+x)
             if player.rect.left <= 120:
                 diff = 120 - player.rect.left
                 player.rect.left = 120
                 current_level.shift_world(diff)
                 
-
             # If the player gets to the end of the level, go to the next level
             current_position = player.rect.x + current_level.world_shift
             if current_position < current_level.level_limit:
@@ -162,7 +162,6 @@ class game():
 
             # Go ahead and update the screen with what we've drawn.
             pygame.display.update()
-            print(player.rect.x - player.level.world_shift, player.rect.y + player.level.world_shift_y)
         # Be IDLE friendly. If you forget this line, the program will 'hang'
         # on exit.
         pygame.quit()
