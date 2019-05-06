@@ -76,45 +76,29 @@ class Level():
         self.world_shift += shift_x
 
         # Go through all the sprite lists and shift
-        for platform in self.platform_list:
-            platform.rect.x += shift_x
-
-        for collectable in self.collectable_list:
-            collectable.rect.x += shift_x
-
-        for scenery in self.platform_scene:
-            scenery.rect.x += shift_x
-        
+        objects = [self.platform_list, self.collectable_list, self.platform_scene, self.player.bullet_list]
+        # Go through all the sprite lists and shift
+        for obj in objects:
+            for item in obj:
+                item.rect.x += shift_x
+ 
         for enemy in self.enemy_list:
             enemy.end += shift_x
             enemy.rect.x += shift_x
             enemy.path[0] += shift_x
             enemy.path[1] += shift_x
         
-        for bullet in self.player.bullet_list:
-            bullet.rect.x += shift_x
-
     
     def shift_world_y(self, shift_y):
         
         # Keep track of the shift amount
         self.world_shift_y += shift_y
-
+        objects = [self.platform_list, self.collectable_list, self.enemy_list, self.player.bullet_list, self.platform_scene]
         # Go through all the sprite lists and shift
-        for platform in self.platform_list:
-            platform.rect.y -= shift_y
+        for obj in objects:
+            for item in obj:
+                item.rect.y -= shift_y
 
-        for collectable in self.collectable_list:
-            collectable.rect.y -= shift_y
-
-        for scenery in self.platform_scene:
-            scenery.rect.y -= shift_y
-        
-        for enemy in self.enemy_list:
-            enemy.rect.y -= shift_y
-        
-        for bullet in self.player.bullet_list:
-            bullet.rect.y -= shift_y
     
     def add_item(tiles, image, objectList, objType):
         # Go through the array above and add platforms
