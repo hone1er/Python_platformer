@@ -110,35 +110,29 @@ class game():
                     player.level.enemy_list.remove(enemy)
                     player.score += 10
 
-
+            ydiff = 0
+            diff = 0
+            if player.rect.top <= 20:
+                ydiff = player.rect.top - 20
+                player.rect.top = 20
+                current_level.shift_world_y(ydiff)
+            if player.rect.bottom >= 550:
+                ydiff = player.rect.bottom - 550
+                player.rect.bottom = 550
+                current_level.shift_world_y(ydiff)
             # If the player gets near the right side, shift the world left (-x)
             if player.rect.right >= 500:
                 diff = player.rect.right - 500
                 player.rect.right = 500
-            # Shift the enemies with the world
-                for crony in player.level.enemy_list:                    
-                    crony.end -= diff
-                    crony.rect.x -= diff
-                    crony.path[0] -= diff
-                    crony.path[1] -= diff
-            # shift any bullets
-                for bullet in player.bullet_list:
-                    bullet.rect.x -= diff
                 current_level.shift_world(-diff)
+
 
             # If the player gets near the left side, shift the world right (+x)
             if player.rect.left <= 120:
                 diff = 120 - player.rect.left
                 player.rect.left = 120
-            # Shift the enemies with the world
-                for crony in player.level.enemy_list:                    
-                    crony.end += diff
-                    crony.rect.x += diff
-                    crony.path[0] += diff
-                    crony.path[1] += diff
-                for bullet in player.bullet_list:
-                    bullet.rect.x += diff
                 current_level.shift_world(diff)
+                
 
             # If the player gets to the end of the level, go to the next level
             current_position = player.rect.x + current_level.world_shift
@@ -150,7 +144,7 @@ class game():
                     player.level = current_level
 
             # IF the player falls, game done
-            if player.rect.y > constants.SCREEN_HEIGHT:
+            if player.rect.y + player.level.world_shift_y + 75 > constants.SCREEN_HEIGHT:
                 done = True
 
             # ALL CODE TO DRAW SHOULD GO BELOW THIS COMMENT
@@ -168,7 +162,7 @@ class game():
 
             # Go ahead and update the screen with what we've drawn.
             pygame.display.update()
-
+            print(player.rect.x - player.level.world_shift, player.rect.y + player.level.world_shift_y)
         # Be IDLE friendly. If you forget this line, the program will 'hang'
         # on exit.
         pygame.quit()
