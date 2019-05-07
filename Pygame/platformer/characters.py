@@ -2,6 +2,7 @@ from sheet_helper import SpriteSheet
 import pygame
 import constants
 import images
+import levels
 
 ################################################################
 ############ Class to respresent the player's sprite ###########
@@ -64,7 +65,7 @@ class Player(pygame.sprite.Sprite):
 
 
         
- 
+    
         # See if we hit anything
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
@@ -94,8 +95,8 @@ class Player(pygame.sprite.Sprite):
             # Stop our vertical movement
             self.change_y = 0
  
-            #if isinstance(block, MovingPlatform):
-             #   self.rect.x += block.change_x
+            if isinstance(block, levels.MovingPlatform):
+                self.rect.x += block.xvel
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:

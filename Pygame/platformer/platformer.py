@@ -88,6 +88,7 @@ class game():
             active_sprite_list.update()
             # Update items in the level
             current_level.update()
+            
 
 
             # Calculate mechanics for each bullet
@@ -155,6 +156,11 @@ class game():
             screen.blit(text, (10, 10))
             for crony in player.level.enemy_list:
                 crony.draw(screen)
+            for platform in player.level.platform_list:
+                try:
+                    platform.draw(screen)
+                except:
+                    pass
             # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
     
             # Limit to 60 frames per second

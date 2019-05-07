@@ -3,6 +3,7 @@ import constants
 from characters import Enemy
 
 
+ 
 
 class Mushroom(pygame.sprite.Sprite):
     """ Item player can collect """
@@ -12,6 +13,7 @@ class Mushroom(pygame.sprite.Sprite):
         self.image = pygame.Surface([width, height])
         self.image = pygame.image.load('png/Object/Mushroom_1.png')
         self.rect = self.image.get_rect()
+
 
 class Platform(pygame.sprite.Sprite):
     """ Platform the user can jump on """
@@ -25,6 +27,54 @@ class Platform(pygame.sprite.Sprite):
         self.image = pygame.Surface([width, height])
         self.image = pygame.image.load('png/Tiles/14.png')
         self.rect = self.image.get_rect()
+
+class MovingPlatform(pygame.sprite.Sprite):
+    """ Platform the user can jump on """
+
+    def __init__(self, width, height, xend=0, xvel=0, yend=0, yvel=0):
+
+        super().__init__()
+
+        self.image = pygame.Surface([width, height])
+        self.image = pygame.image.load('png/Tiles/14.png')
+        self.rect = self.image.get_rect()
+        # attributes to move platform
+        self.xend = xend
+        self.yend = yend
+        self.xvel = xvel
+        self.yvel = yvel
+        self.moveCount = 0
+        self.xpath = [self.rect.x, self.xend]
+        self.ypath = [self.rect.y, self.yend]
+
+
+    def draw(self, win):
+        self.move()
+
+    def move(self):
+        if self.xvel > 0:
+            if self.rect.x + self.xvel < self.xpath[1]:
+                self.rect.x += self.xvel
+            else:
+                self.xvel *= -1
+        else:
+            if self.rect.x - self.xvel > self.xpath[0]:
+                self.rect.x += self.xvel
+                self.moveCount = 0
+            else:
+                self.xvel *= -1
+
+        if self.yvel > 0:
+            if self.rect.y + self.yvel < self.ypath[1]:
+                self.rect.y += self.yvel
+            else:
+                self.yvel *= -1
+        else:
+            if self.rect.y - self.yvel > self.ypath[0]:
+                self.rect.y += self.yvel
+                self.moveCount = 0
+            else:
+                self.yvel *= -1
 
 
 class Level():
@@ -45,6 +95,7 @@ class Level():
         # How far this world has been scrolled left/right
         self.world_shift = 0
         self.world_shift_y = 0
+
     # Update everythign on this level
     def update(self):
         """ Update everything in this level."""
@@ -67,6 +118,7 @@ class Level():
         self.collectable_list.draw(screen)
 
 
+
     def shift_world(self, shift_x):
         """ When the user moves left/right and we need to scroll
         everything: """
@@ -76,11 +128,21 @@ class Level():
         self.world_shift += shift_x
 
         # Go through all the sprite lists and shift
-        objects = [self.platform_list, self.collectable_list, self.platform_scene, self.player.bullet_list]
+        objects = [
+            self.platform_list,
+            self.collectable_list,
+            self.platform_scene,
+            self.player.bullet_list,
+            ]
         # Go through all the sprite lists and shift
         for obj in objects:
             for item in obj:
                 item.rect.x += shift_x
+                if isinstance(item, MovingPlatform):
+                    item.xend += shift_x
+                    item.xpath[0] += shift_x
+                    item.xpath[1] += shift_x
+
  
         for enemy in self.enemy_list:
             enemy.end += shift_x
@@ -93,7 +155,14 @@ class Level():
         
         # Keep track of the shift amount
         self.world_shift_y += shift_y
-        objects = [self.platform_list, self.collectable_list, self.enemy_list, self.player.bullet_list, self.platform_scene]
+        # all of the object list that need to be shifted
+        objects = [
+            self.platform_list,
+            self.collectable_list,
+            self.enemy_list,
+            self.player.bullet_list,
+            self.platform_scene,
+            ]
         # Go through all the sprite lists and shift
         for obj in objects:
             for item in obj:
@@ -112,7 +181,17 @@ class Level():
         # Go through the array above and add platforms
         for crony in cronies:                          
             obj = Enemy(crony[0],crony[1],crony[2],crony[3], crony[4])  
-            objectList.add(obj)  
+            objectList.add(obj)
+
+    def add_movingPlatform(tiles, image, objectList):
+        # Go through the array above and add platforms
+        for tile in tiles:                                  # tiles is a dictionary containing {image: object}
+            obj = MovingPlatform(tile[0],tile[1],xend=tile[3],xvel=tile[4],yend=tile[6],yvel=tile[7])                 # objectType(width, height)
+            obj.image = image
+            obj.rect = obj.image.get_rect()                               # object image
+            obj.rect.x, obj.rect.y  = tile[2], tile[5]      # objectType.x, objType.y
+            objectList.add(obj) 
+
 
 
 # Create platforms for the level
@@ -135,7 +214,7 @@ class Level_01(Level):
             [1310, 475, 20, 20, 1650]]
 ######################################################################################
 
-# Array with width, height, x, and y of platforms. Tile Dictionary values
+# Array with [width, height, x, y] of platforms. Tile Dictionary values
 ######################################################################################
         ground_tiles = [[210, 70, 105, 560],
 
@@ -233,6 +312,14 @@ class Level_01(Level):
         mushroom_2 = [[0, 0, 1050, 520]
                       ]
 
+# Moving Platforms
+#####################################################################################
+###  [ width, height, X, X end, X velocity, Y, Y end, Y velocity]
+        movingplatform = [
+            [210, 70, 500, 600, 2, 260, 260, 0]
+        ]
+
+
 # Dictionaries with images: objects
 #####################################################################################
         tile_dict = {pygame.image.load('png/Tiles/1.png'): ground_tiles,
@@ -249,7 +336,7 @@ class Level_01(Level):
         collectable_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
                        pygame.image.load('png/Object/Mushroom_2.png'): mushroom_2,}
 
-
+        moving_dict = {pygame.image.load('png/Tiles/14.png'): movingplatform}
         # got through tile_dict and add objects
         # Add platforms
         for tile in tile_dict:
@@ -262,6 +349,10 @@ class Level_01(Level):
         # Add collectables
         for collectable in collectable_dict:
             Level.add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
+
+        for tile in moving_dict:
+            Level.add_movingPlatform(moving_dict[tile], tile, self.platform_list)
+
 
         # add enemies
         Level.add_enemy(cronies, self.enemy_list)
