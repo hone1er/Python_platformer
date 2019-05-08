@@ -173,8 +173,9 @@ class Level():
         # Go through the array above and add platforms
         for tile in tiles:                                  # tiles is a dictionary containing {image: object}
             obj = objType(tile[0], tile[1])                 # objectType(width, height)
+            obj.image = image                               # object image    
+            obj.rect = obj.image.get_rect()       
             obj.rect.x, obj.rect.y  = tile[2], tile[3]      # objectType.x, objType.y
-            obj.image = image                               # object image
             objectList.add(obj)                             # add object to objectList
     
     def add_enemy(cronies, objectList):
