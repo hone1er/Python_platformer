@@ -60,7 +60,6 @@ class MovingPlatform(pygame.sprite.Sprite):
         else:
             if self.rect.x - self.xvel > self.xpath[0]:
                 self.rect.x += self.xvel
-                self.moveCount = 0
             else:
                 self.xvel *= -1
 
@@ -72,7 +71,6 @@ class MovingPlatform(pygame.sprite.Sprite):
         else:
             if self.rect.y - self.yvel > self.ypath[0]:
                 self.rect.y += self.yvel
-                self.moveCount = 0
             else:
                 self.yvel *= -1
 
@@ -167,6 +165,11 @@ class Level():
         for obj in objects:
             for item in obj:
                 item.rect.y -= shift_y
+                if isinstance(item, MovingPlatform):
+                    item.yend -= shift_y
+                    item.ypath[0] -= shift_y
+                    item.ypath[1] -= shift_y
+
 
     
     def add_item(tiles, image, objectList, objType):
@@ -180,17 +183,18 @@ class Level():
     
     def add_enemy(cronies, objectList):
         # Go through the array above and add platforms
-        for crony in cronies:                          
-            obj = Enemy(crony[0],crony[1],crony[2],crony[3], crony[4])  
+        for crony in cronies: 
+                     
+            obj = Enemy(x=crony[0],y=crony[1],width=crony[2],height=crony[3],end=crony[4])  
             objectList.add(obj)
 
     def add_movingPlatform(tiles, image, objectList):
         # Go through the array above and add platforms
         for tile in tiles:                                  # tiles is a dictionary containing {image: object}
-            obj = MovingPlatform(tile[0],tile[1],xend=tile[3],xvel=tile[4],yend=tile[6],yvel=tile[7])                 # objectType(width, height)
+            obj = MovingPlatform(width=tile[0],height=tile[1],xend=tile[3],xvel=tile[4],yend=tile[5],yvel=tile[7])                 # objectType(width, height)
             obj.image = image
             obj.rect = obj.image.get_rect()                               # object image
-            obj.rect.x, obj.rect.y  = tile[2], tile[5]      # objectType.x, objType.y
+            obj.rect.x, obj.rect.y  = tile[2], tile[6]      # objectType.x, objType.y
             objectList.add(obj) 
 
 
@@ -317,8 +321,9 @@ class Level_01(Level):
 #####################################################################################
 ###  [ width, height, X, X end, X velocity, Y, Y end, Y velocity]
         movingplatform = [
-            [210, 70, 500, 600, 2, 260, 260, 0]
-        ]
+            [210, 70, 500, 600, 2, 260, 260, 0],
+            [210, 70, 3400, 3400, 0, 500, 200, 3]
+            ]
 
 
 # Dictionaries with images: objects

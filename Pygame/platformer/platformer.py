@@ -111,7 +111,7 @@ def main():
                 active_sprite_list.remove(bullet)
                 player.level.enemy_list.remove(enemy)
                 player.score += 10
-
+        
         ydiff = 0
         diff = 0
         # if the player gets near the top/bottom, shift the world down/up (ydiff)
@@ -165,7 +165,7 @@ def main():
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
         # Limit to 60 frames per second
         clock.tick(60)
-
+        print(player.rect.y)
         # Go ahead and update the screen with what we've drawn.
         pygame.display.update()
     # Be IDLE friendly. If you forget this line, the program will 'hang'
@@ -214,7 +214,7 @@ def game_intro():
                 pygame.quit()
                 quit()
 
-        screen.fill(constants.WHITE)
+        screen.fill((50,70,220))
         largeText = pygame.font.Font('freesansbold.ttf', 65)
         TextSurf, TextRect = text_objects("Welcome to Catman", largeText)
         TextRect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
@@ -229,3 +229,4 @@ def game_intro():
 
 if __name__ == "__main__":
     game_intro()
+    

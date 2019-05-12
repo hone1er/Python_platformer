@@ -71,10 +71,11 @@ class Player(pygame.sprite.Sprite):
         for block in block_hit_list:
             # If we are moving right,
             # set our right side to the left side of the item we hit
-            if self.change_x > 0:
+                            
+            if isinstance(block, levels.MovingPlatform) == False and self.change_x > 0:
                 self.rect.right = block.rect.left
 
-            elif self.change_x < 0:
+            elif isinstance(block, levels.MovingPlatform) == False and self.change_x < 0:
                 # Otherwise if we are moving left, do the opposite.
                 self.rect.left = block.rect.right
  
@@ -96,7 +97,14 @@ class Player(pygame.sprite.Sprite):
             self.change_y = 0
  
             if isinstance(block, levels.MovingPlatform):
-                self.rect.x += block.xvel
+                if block.xvel > 0:
+                    self.rect.x += block.xvel
+                if block.xvel < 0:
+                    self.rect.x += block.xvel
+                if block.yvel > 0:
+                    self.rect.y += block.yvel
+                if block.yvel < 0:
+                    self.rect.y -= block.yvel
 
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:
@@ -168,12 +176,13 @@ class Player(pygame.sprite.Sprite):
         """ Called when the user hits the left arrow. """
         self.change_x = -6
         self.direction = "L"
+
  
     def go_right(self):
         """ Called when the user hits the right arrow. """
         self.change_x = 6
         self.direction = "R"
- 
+
     def stop(self):
         """ Called when the user lets off the keyboard. """
         self.change_x = 0
