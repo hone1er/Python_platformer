@@ -31,7 +31,7 @@ class Platform(pygame.sprite.Sprite):
 class MovingPlatform(pygame.sprite.Sprite):
     """ Platform the user can jump on """
 
-    def __init__(self, width, height, xend=0, xvel=0, yend=0, yvel=0):
+    def __init__(self, width, height, xstart=0, xend=0, xvel=0, ystart=0, yend=0, yvel=0):
 
         super().__init__()
 
@@ -39,6 +39,8 @@ class MovingPlatform(pygame.sprite.Sprite):
         self.image = pygame.image.load('png/Tiles/14.png')
         self.rect = self.image.get_rect()
         # attributes to move platform
+        self.rect.x = xstart
+        self.rect.y = ystart
         self.xend = xend
         self.yend = yend
         self.xvel = xvel
@@ -52,6 +54,7 @@ class MovingPlatform(pygame.sprite.Sprite):
         self.move()
 
     def move(self):
+        # move the platform based on x/y velocity and path
         if self.xvel > 0:
             if self.rect.x + self.xvel < self.xpath[1]:
                 self.rect.x += self.xvel
@@ -183,32 +186,46 @@ class Level():
     
     def add_enemy(cronies, objectList):
         # Go through the array above and add platforms
-        for crony in cronies: 
-                     
+        for crony in cronies:     
             obj = Enemy(x=crony[0],y=crony[1],width=crony[2],height=crony[3],end=crony[4])  
             objectList.add(obj)
 
-    def add_movingPlatform(tiles, image, objectList):
+    def add_movingPlatform(tiles, objectList):
         # Go through the array above and add platforms
-        for tile in tiles:                                  # tiles is a dictionary containing {image: object}
-            obj = MovingPlatform(width=tile[0],height=tile[1],xend=tile[3],xvel=tile[4],yend=tile[5],yvel=tile[7])                 # objectType(width, height)
-            obj.image = image
-            obj.rect = obj.image.get_rect()                               # object image
-            obj.rect.x, obj.rect.y  = tile[2], tile[6]      # objectType.x, objType.y
-            objectList.add(obj) 
+        obj = MovingPlatform(width=tiles[0],height=tiles[1],xstart=tiles[2],xend=tiles[3],xvel=tiles[4],ystart=tiles[6],yend=tiles[5],yvel=tiles[7])                 # objectType(width, height)
+        objectList.add(obj) 
 
 
 
-# Create platforms for the level
+
 class Level_01(Level):
     """ Definition for level 1. """
 
     def __init__(self, player):
         """ Create level 1. """
-        
+
         # Call the parent constructor
         Level.__init__(self, player)
 
+        self.level_limit = -1000
+
+
+        # Array with type of platform, and x, y location of the platform.
+
+        center_tiles = [[125,30,x*125,575] for x in range(30)]
+
+        Level.add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), self.platform_list, Platform)
+
+
+# Create platforms for the level
+class Level_02(Level):
+    """ Definition for level 2. """
+
+    def __init__(self, player):
+        """ Create level 2. """
+        
+        # Call the parent constructor
+        Level.__init__(self, player)
         self.level_limit = -4000
 
 # cronies list....[startX, Y, width, height, endX]
@@ -221,97 +238,103 @@ class Level_01(Level):
 
 # Array with [width, height, x, y] of platforms. Tile Dictionary values
 ######################################################################################
-        ground_tiles = [[210, 70, 105, 560],
+        ground_tiles = [[125, 70, 105, 560],
 
-                        [210, 70, 0, 560],
+                        [125, 70, 0, 560],
 
-                        [210, 70, 985, 560]
+                        [125, 70, 985, 560]
                         ]
 
         left_tiles = [
-            [210, 70, 300, 500],
+            [125, 70, 300, 500],
 
-            [210, 70, 740, 400],
+            [125, 70, 740, 400],
 
-            [210, 70, 1300, 500],
+            [125, 70, 1300, 500],
 
-            [210, 70, 1925, 350],
+            [125, 70, 1925, 350],
 
-            [210, 70, 2700, 565]
+            [125, 70, 2700, 565],
+
+            [125, 70, 4500, 550]
 
                  ]
-        center_tiles = [[210, 70, 425, 500],
+        center_tiles = [[125, 70, 425, 500],
 
-                        [210, 70, 985, 400],
-                        [210, 70, 865, 400],
+                        [125, 70, 985, 400],
+                        [125, 70, 865, 400],
 
 
 
                         #platform with collectable
-                        [210, 80, 1500, 290],
-                        [210, 70, 1500, 195],
+                        [125, 80, 1500, 290],
+                        [125, 70, 1500, 195],
 
-                        [210, 80, 1300, 235],
-                        [210, 70, 1300, 140],
+                        [125, 80, 1300, 235],
+                        [125, 70, 1300, 140],
 
 
-                        [210, 70, 1425, 500],
-                        [210, 70, 1550, 500],
+                        [125, 70, 1425, 500],
+                        [125, 70, 1550, 500],
 
-                        [210, 70, 2050, 350],
-                        [210, 70, 2175, 350],
+                        [125, 70, 2050, 350],
+                        [125, 70, 2175, 350],
 
-                        [210, 70, 1995, 620],
-                        [210, 70, 2100, 620],
-                        [210, 70, 2225, 620],
+                        [125, 70, 1995, 620],
+                        [125, 70, 2100, 620],
+                        [125, 70, 2225, 620],
 
-                        [210, 70, 2825, 565],
-                        [210, 70, 2950, 565],
+                        [125, 70, 2825, 565],
+                        [125, 70, 2950, 565],
 
+                        [125, 70, 4500, 550],
+                        [125, 70, 4625, 550],
+                        [125, 70, 4750, 550],
+                        
 
                       ]
 
 
-        right_tiles = [[210, 70, 550, 500],
+        right_tiles = [[125, 70, 550, 500],
 
-                       [210, 70, 2300, 350],
-                       [210, 70, 2350, 620],
-                       [210, 70, 3075, 565]
+                       [125, 70, 2300, 350],
+                       [125, 70, 2350, 620],
+                       [125, 70, 3075, 565]
                         ]
         # Wall at start of level
         end_tile_1 = [
-                     [210, 70, -125, 560],
-                     [210, 70, -125, 320],
-                     [210, 70, -125, 80],
+                     [125, 70, -125, 560],
+                     [125, 70, -125, 320],
+                     [125, 70, -125, 80],
 
-                     [210, 80, 1500, 255],
+                     [125, 80, 1500, 255],
 
-                     [210, 70, 1930, 510],
-                     [210, 70, 1930, 390],
+                     [125, 70, 1930, 510],
+                     [125, 70, 1930, 390],
 
                       ]
         # Wall at start of level continued
         end_tile_2 =  [
-                    [210, 70, -125, 440],
-                    [210, 70, -125, 200],
-                    [210, 70, -125, 0],
+                    [125, 70, -125, 440],
+                    [125, 70, -125, 200],
+                    [125, 70, -125, 0],
 
-                    [210, 80, 1300, 200],
+                    [125, 80, 1300, 200],
 
-                    [210, 70, 1930, 630],
-                    [210, 70, 1930, 350]
+                    [125, 70, 1930, 630],
+                    [125, 70, 1930, 350]
                         ]
 # Collectable/scenery dictionary values
 ###################################################################################
-        tree_1 = [[210, 70, 30, 259],
+        tree_1 = [[125, 70, 30, 259],
 
-                  [210, 70, 850, 100]
+                  [125, 70, 850, 100]
                   ]
 
-        sign = [[210, 70, 400, 436]
+        sign = [[125, 70, 400, 436]
                 ]
 
-        mushroom_1 = [[210, 70, 0, 525],
+        mushroom_1 = [[125, 70, 0, 525],
                       [0, 0, 1510, 160]
                     ]
         mushroom_2 = [[0, 0, 1050, 520]
@@ -321,8 +344,8 @@ class Level_01(Level):
 #####################################################################################
 ###  [ width, height, X, X end, X velocity, Y, Y end, Y velocity]
         movingplatform = [
-            [210, 70, 500, 600, 2, 260, 260, 0],
-            [210, 70, 3400, 3400, 0, 500, 200, 3]
+            [125, 70, 3400, 3400, 0, 500, 200, 3],
+            [125, 70, 3600, 4200, 3, 500, 500, 0],
             ]
 
 
@@ -342,7 +365,6 @@ class Level_01(Level):
         collectable_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
                        pygame.image.load('png/Object/Mushroom_2.png'): mushroom_2,}
 
-        moving_dict = {pygame.image.load('png/Tiles/14.png'): movingplatform}
         # got through tile_dict and add objects
         # Add platforms
         for tile in tile_dict:
@@ -356,40 +378,11 @@ class Level_01(Level):
         for collectable in collectable_dict:
             Level.add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
 
-        for tile in moving_dict:
-            Level.add_movingPlatform(moving_dict[tile], tile, self.platform_list)
-
+        for platform in movingplatform:
+            Level.add_movingPlatform(platform, self.platform_list)
+            print(platform)
 
         # add enemies
         Level.add_enemy(cronies, self.enemy_list)
-3
 # Create platforms for the level
-class Level_02(Level):
-    """ Definition for level 2. """
 
-    def __init__(self, player):
-        """ Create level 1. """
-
-        # Call the parent constructor
-        Level.__init__(self, player)
-
-        self.level_limit = -1000
-
-
-        # Array with type of platform, and x, y location of the platform.
-        left_tiles = [[210, 30, 0, 570],
-                      [210, 30, 400, 420],
-                      [210, 30, 1000, 520],
-                      [210, 30, 1000, 280]
-                        ]
-        center_tiles = [[210, 30, 125, 570],
-                        [210, 30, 300, 570],
-                        [210, 30, 500, 750],
-                      [210, 30, 650, 420],
-                      [210, 30, 1064, 520],
-                      [210, 30, 1184, 280]
-                      ]
-
-
-        Level.add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), self.platform_list, Platform)
-        Level.add_item(left_tiles, pygame.image.load('png/Tiles/13.png'), self.platform_list, Platform)        

@@ -95,7 +95,8 @@ class Player(pygame.sprite.Sprite):
  
             # Stop our vertical movement
             self.change_y = 0
- 
+
+            # if the block is a moving platform, add the blocks x/y velocity to the players x/y velocity 
             if isinstance(block, levels.MovingPlatform):
                 if block.xvel > 0:
                     self.rect.x += block.xvel
@@ -106,6 +107,7 @@ class Player(pygame.sprite.Sprite):
                 if block.yvel < 0:
                     self.rect.y -= block.yvel
 
+        # subtract 25 points if player runs into enemy
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
         for enemy in enemy_hit_list:
             if self.score > 25:
@@ -113,7 +115,7 @@ class Player(pygame.sprite.Sprite):
             if self.score <= 25:
                 self.score = 0                
          
-
+        # add 25 points when player retrieves collectable
         coin_hit_list = pygame.sprite.spritecollide(self, self.level.collectable_list, True)
         for coin in coin_hit_list:
             self.score += 25
@@ -157,14 +159,12 @@ class Player(pygame.sprite.Sprite):
 
         # wall jump
         if len(platform_side_hit_list_r) > 0 and self.r_jump == 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
-
             self.change_y = -10
             self.r_jump += 1
             self.l_jump = 0
 
-
+        # wall jump
         if len(platform_side_hit_list_l) > 0 and self.l_jump == 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
-
             self.change_y = -10
             self.l_jump += 1
             self.r_jump = 0

@@ -13,11 +13,8 @@ size = [constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Side-scrolling Platformer")
 
-    
-
 
 def main():
-
 
     """ Main Program """
     pygame.init()
@@ -32,7 +29,7 @@ def main():
 
 
 
-    # Set the current level
+    # Set the current level & player position
     current_level_no = 0
     current_level = level_list[current_level_no]
 
@@ -50,7 +47,7 @@ def main():
 
     # Used to manage how fast the screen updates
     clock = pygame.time.Clock()
-
+    start_ticks=pygame.time.get_ticks() #starter tick
 
     # -------- Main Program Loop -----------
     while not done:
@@ -72,11 +69,10 @@ def main():
                     # Set the bullet so it is where the player is
                     bullet.rect.x = player.rect.x + 10
                     bullet.rect.y = player.rect.y + 10
-            
                     # Add the bullet to the lists
                     active_sprite_list.add(bullet)
                     player.bullet_list.add(bullet)
-
+            # set what happens when player lets the key up
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT and player.change_x < 0:
                     player.stop()
@@ -84,12 +80,10 @@ def main():
                     player.stop()
 
 
-
         # Update the player.
         active_sprite_list.update()
         # Update items in the level
         current_level.update()
-        
 
 
         # Calculate mechanics for each bullet
@@ -101,7 +95,6 @@ def main():
             # See if it hit a block
             block_hit_list = pygame.sprite.spritecollide(bullet, player.level.platform_list, False)
             enemy_hit_list = pygame.sprite.spritecollide(bullet, player.level.enemy_list, True)
-    
             # For each block hit, remove the bullet and add to the score
             for block in block_hit_list:
                 player.bullet_list.remove(bullet)
@@ -114,16 +107,18 @@ def main():
         
         ydiff = 0
         diff = 0
-        # if the player gets near the top/bottom, shift the world down/up (ydiff)
+        # if the player gets near the top, shift the world up (ydiff)
         if player.rect.top <= 20:
             ydiff = player.rect.top - 20
             player.rect.top = 20
             current_level.shift_world_y(ydiff)
 
+        # if the player gets near the bottom, shift the world down (ydiff)
         if player.rect.bottom >= 550:
             ydiff = player.rect.bottom - 550
             player.rect.bottom = 550
             current_level.shift_world_y(ydiff)
+
         # If the player gets near the right side, shift the world left (-x)
         if player.rect.right >= 500:
             diff = player.rect.right - 500
@@ -149,12 +144,15 @@ def main():
         if player.rect.y + player.level.world_shift_y + 75 > constants.SCREEN_HEIGHT:
             done = True
 
+        seconds=(pygame.time.get_ticks()-start_ticks)/1000 #calculate how many seconds
         # ALL CODE TO DRAW SHOULD GO BELOW THIS COMMENT
         current_level.draw(screen)
         active_sprite_list.draw(screen)
         font = pygame.font.SysFont(None, 25)
-        text = font.render(f"Score: {player.score}", True, constants.BLACK)
-        screen.blit(text, (10, 10))
+        showscore = font.render(f"Score: {player.score}", True, constants.BLACK)
+        showclock = font.render(f"Time: {round(seconds,2)}", True, constants.BLACK)
+        screen.blit(showscore, (10, 10))
+        screen.blit(showclock, (constants.SCREEN_WIDTH/2, 10))
         for crony in player.level.enemy_list:
             crony.draw(screen)
         for platform in player.level.platform_list:
@@ -165,13 +163,20 @@ def main():
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
         # Limit to 60 frames per second
         clock.tick(60)
-        print(player.rect.y)
         # Go ahead and update the screen with what we've drawn.
         pygame.display.update()
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()
 
+
+#####################################################################################################
+                    ####      ####     #########  #########   ####  ####    ####
+                  #### ###   ### ###   ###        #### ####   ####  ####    ####
+                 ####   ### ###  ####  ########   ####  ####  ####  ####    ####
+                ####    #####     #### ###        ####    ### ####  ############
+                ####              #### #########  ####     #######  ############
+####################################################################################################
 #used in message_display()
 def text_objects(text, font):
     textSurface = font.render(text, True, constants.BLACK)
@@ -189,7 +194,6 @@ def button(msg,x,y,w,h,ic,ac, action=None):
             action()
     else:
         pygame.draw.rect(screen, ic, (x,y,w,h))
-
     smallText = pygame.font.Font('freesansbold.ttf',20)
     textSurf, textRect = text_objects(msg, smallText)
     textRect.center = ((x+(w/2)),(y+(h/2)))
