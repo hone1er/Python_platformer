@@ -1,10 +1,12 @@
 import pygame
 import constants
-from characters import Enemy
+from characters import Enemy, MovingPlatform
 
 
- 
-
+# Set the height and width of the screen
+size = [constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT]
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Side-scrolling Platformer")
 class Mushroom(pygame.sprite.Sprite):
     """ Item player can collect """
 
@@ -18,7 +20,7 @@ class Mushroom(pygame.sprite.Sprite):
 class Platform(pygame.sprite.Sprite):
     """ Platform the user can jump on """
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, z=1, explodable=True):
         """ Platform constructor. Assumes constructed with user passing in
             an array of 5 numbers like what's defined at the top of this code.
             """
@@ -27,55 +29,7 @@ class Platform(pygame.sprite.Sprite):
         self.image = pygame.Surface([width, height])
         self.image = pygame.image.load('png/Tiles/14.png')
         self.rect = self.image.get_rect()
-
-class MovingPlatform(pygame.sprite.Sprite):
-    """ Platform the user can jump on """
-
-    def __init__(self, width, height, xstart=0, xend=0, xvel=0, ystart=0, yend=0, yvel=0):
-
-        super().__init__()
-
-        self.image = pygame.Surface([width, height])
-        self.image = pygame.image.load('png/Tiles/14.png')
-        self.rect = self.image.get_rect()
-        # attributes to move platform
-        self.rect.x = xstart
-        self.rect.y = ystart
-        self.xend = xend
-        self.yend = yend
-        self.xvel = xvel
-        self.yvel = yvel
-        self.moveCount = 0
-        self.xpath = [self.rect.x, self.xend]
-        self.ypath = [self.rect.y, self.yend]
-
-
-    def draw(self, win):
-        self.move()
-
-    def move(self):
-        # move the platform based on x/y velocity and path
-        if self.xvel > 0:
-            if self.rect.x + self.xvel < self.xpath[1]:
-                self.rect.x += self.xvel
-            else:
-                self.xvel *= -1
-        else:
-            if self.rect.x - self.xvel > self.xpath[0]:
-                self.rect.x += self.xvel
-            else:
-                self.xvel *= -1
-
-        if self.yvel > 0:
-            if self.rect.y + self.yvel < self.ypath[1]:
-                self.rect.y += self.yvel
-            else:
-                self.yvel *= -1
-        else:
-            if self.rect.y - self.yvel > self.ypath[0]:
-                self.rect.y += self.yvel
-            else:
-                self.yvel *= -1
+        self.explodable = bool
 
 
 class Level():
@@ -86,6 +40,7 @@ class Level():
     def __init__(self, player):
         """ Constructor. Pass in a handle to player. Needed for when moving
             platforms collide with the player. """
+        self.wall_list = pygame.sprite.Group()
         self.platform_list = pygame.sprite.Group()
         self.platform_scene = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
@@ -100,6 +55,8 @@ class Level():
     # Update everythign on this level
     def update(self):
         """ Update everything in this level."""
+        self.player.bullet_list.update()
+        self.wall_list.update()
         self.platform_list.update()
         self.platform_scene.update()
         self.enemy_list.update()
@@ -114,6 +71,7 @@ class Level():
 
         # Draw all the sprite lists that we have
         self.platform_list.draw(screen)
+        self.wall_list.draw(screen)
         self.enemy_list.draw(screen)
         self.platform_scene.draw(screen)
         self.collectable_list.draw(screen)
@@ -130,6 +88,7 @@ class Level():
 
         # Go through all the sprite lists and shift
         objects = [
+            self.wall_list,
             self.platform_list,
             self.collectable_list,
             self.platform_scene,
@@ -158,6 +117,7 @@ class Level():
         self.world_shift_y += shift_y
         # all of the object list that need to be shifted
         objects = [
+            self.wall_list,
             self.platform_list,
             self.collectable_list,
             self.enemy_list,
@@ -207,14 +167,71 @@ class Level_01(Level):
         # Call the parent constructor
         Level.__init__(self, player)
 
-        self.level_limit = -1000
-
+        self.level_limit = -4000
 
         # Array with type of platform, and x, y location of the platform.
+        center_tiles = [
+            [125, 70, 0, 500],
+            [125, 70, 125, 500],
+            [125, 70, 500, 500],
+            [125, 70, 625, 300],
+            [125, 70, 750, 500]
+        ]
 
-        center_tiles = [[125,30,x*125,575] for x in range(30)]
 
-        Level.add_item(center_tiles,  pygame.image.load('png/Tiles/14.png'), self.platform_list, Platform)
+
+        # Wall at start of level
+        end_tile_1 = [
+                     [125, 70, -125, 560],
+                     [125, 70, -125, 320],
+                     [125, 70, -125, 80],
+                     [125, 70, -125, 680]
+                     ]
+
+        # Wall at start of level continued
+        end_tile_2 =  [
+                    [125, 70, -125, 440],
+                    [125, 70, -125, 200],
+                    [125, 70, -125, 0],
+                    ]
+        
+        ground_tiles = [[125,30,x*125,575] for x in range(abs(self.level_limit//45))]
+        floor_tile = [[125, 70, x*125, 625] for x in range(len(ground_tiles))]
+
+
+        mushroom_1 = [[125, 70, 25, 465],
+                      [64, 64, 675, 260]
+                      
+                    ]
+        mushroom_2 = [[0, 0, 625, 540]
+                      ]
+
+        #### wall at start of levels and ground tiles
+        wall_dict = {
+                pygame.image.load('png/Tiles/10.png'): end_tile_1,
+                pygame.image.load('png/Tiles/8.png'): end_tile_2,
+                pygame.image.load('png/Tiles/8.png'): floor_tile,
+                pygame.image.load('png/Tiles/14.png'): ground_tiles,
+                }
+
+        platforms_dict = {
+                pygame.image.load('png/Tiles/14.png'): center_tiles
+                }
+
+        collectable_dict = {pygame.image.load('png/Object/Mushroom_1.png'): mushroom_1,
+                       pygame.image.load('png/Object/Mushroom_2.png'): mushroom_2,}
+        
+        for wall in wall_dict:
+            Level.add_item(wall_dict[wall], wall, self.wall_list, Platform)
+
+        for platform in platforms_dict:
+            Level.add_item(platforms_dict[platform], platform, self.platform_list, Platform)
+
+                # Add collectables
+        for collectable in collectable_dict:
+            Level.add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
+
+            
 
 
 # Create platforms for the level
@@ -242,7 +259,7 @@ class Level_02(Level):
 
                         [125, 70, 0, 560],
 
-                        [125, 70, 985, 560]
+                        [125, 70, 995, 560]
                         ]
 
         left_tiles = [
@@ -380,7 +397,6 @@ class Level_02(Level):
 
         for platform in movingplatform:
             Level.add_movingPlatform(platform, self.platform_list)
-            print(platform)
 
         # add enemies
         Level.add_enemy(cronies, self.enemy_list)

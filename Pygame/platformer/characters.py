@@ -2,7 +2,8 @@ from sheet_helper import SpriteSheet
 import pygame
 import constants
 import images
-import levels
+
+
 
 ################################################################
 ############ Class to respresent the player's sprite ###########
@@ -68,14 +69,16 @@ class Player(pygame.sprite.Sprite):
     
         # See if we hit anything
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-        for block in block_hit_list:
+        wall_hit_list = pygame.sprite.spritecollide(self, self.level.wall_list, False)
+
+        for block in wall_hit_list:
             # If we are moving right,
             # set our right side to the left side of the item we hit
                             
-            if isinstance(block, levels.MovingPlatform) == False and self.change_x > 0:
+            if isinstance(block, MovingPlatform) == False and self.change_x > 0:
                 self.rect.right = block.rect.left
 
-            elif isinstance(block, levels.MovingPlatform) == False and self.change_x < 0:
+            elif isinstance(block, MovingPlatform) == False and self.change_x < 0:
                 # Otherwise if we are moving left, do the opposite.
                 self.rect.left = block.rect.right
  
@@ -83,21 +86,31 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.change_y
  
         # Check and see if we hit anything
+
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
  
             # Reset our position based on the top/bottom of the object.
+            if self.change_y > 0 and self.rect.top < block.rect.top:
+                self.rect.bottom = block.rect.top
+                self.change_y = 0
+
+
+        wall_hit_list = pygame.sprite.spritecollide(self, self.level.wall_list, False)
+        for block in wall_hit_list:
+ 
+            # Reset our position based on the top/bottom of the object.
             if self.change_y > 0:
                 self.rect.bottom = block.rect.top
-
+            
             elif self.change_y < 0:
                 self.rect.top = block.rect.bottom
- 
+
             # Stop our vertical movement
             self.change_y = 0
 
             # if the block is a moving platform, add the blocks x/y velocity to the players x/y velocity 
-            if isinstance(block, levels.MovingPlatform):
+            if isinstance(block, MovingPlatform):
                 if block.xvel > 0:
                     self.rect.x += block.xvel
                 if block.xvel < 0:
@@ -140,18 +153,19 @@ class Player(pygame.sprite.Sprite):
         # when working with a platform moving down.
         self.rect.y += 2
         platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        wall_hit_list = pygame.sprite.spritecollide(self, self.level.wall_list, False)
         self.rect.y -= 2
 
         self.rect.x += 2
-        platform_side_hit_list_r = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        platform_side_hit_list_r = pygame.sprite.spritecollide(self, self.level.wall_list, False)
         self.rect.x -= 2
         self.rect.x -= 2
-        platform_side_hit_list_l = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        platform_side_hit_list_l = pygame.sprite.spritecollide(self, self.level.wall_list, False)
         self.rect.x += 2
 
 
         # If it is ok to jump, set our speed upwards
-        if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
+        if len(platform_hit_list) > 0 or len(wall_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
             self.change_y = -10
             self.r_jump = 0
             self.l_jump = 0
@@ -194,20 +208,38 @@ class Player(pygame.sprite.Sprite):
 ###############################################################
 class Bullet(pygame.sprite.Sprite):
     """ This class represents the bullet . """
-    def __init__(self, direction):
+    def __init__(self, player):
         # Call the parent class (Sprite) constructor
         super().__init__()
-        self.direction = direction
+        self.player = player
+        self.direction = player.direction
         self.image = pygame.Surface([10, 4])
         self.image.fill(constants.BLACK)
         self.rect = self.image.get_rect()
  
     def update(self):
-        """ Move the bullet. """  
         if self.direction == 'L':
             self.rect.x -= 8  
         elif self.direction == 'R':
             self.rect.x += 8
+        width = constants.SCREEN_WIDTH
+ 
+        for bullet in self.player.bullet_list:
+            if bullet.rect.x >= self.player.rect.x + width/1.15 or bullet.rect.x <= self.player.rect.x - width/1.15:
+                self.player.bullet_list.remove(bullet)
+            # See if it hit a block
+            block_hit_list = pygame.sprite.spritecollide(bullet, self.player.level.wall_list, False)
+            enemy_hit_list = pygame.sprite.spritecollide(bullet, self.player.level.enemy_list, True)
+            # For each block hit, remove the bullet and add to the score
+            for block in block_hit_list:
+                self.player.bullet_list.remove(bullet)
+
+            for enemy in enemy_hit_list:
+                self.player.bullet_list.remove(bullet)
+                self.player.level.enemy_list.remove(enemy)
+                self.player.score += 10
+
+
 
 ################################################################
 ############### Class to respresent the enemies ################
@@ -246,3 +278,54 @@ class Enemy(pygame.sprite.Sprite):
                 self.walkCount = 0
             else:
                 self.vel *= -1
+
+
+
+class MovingPlatform(pygame.sprite.Sprite):
+    """ Platform the user can jump on """
+
+    def __init__(self, width, height, xstart=0, xend=0, xvel=0, ystart=0, yend=0, yvel=0):
+
+        super().__init__()
+
+        self.image = pygame.Surface([width, height])
+        self.image = pygame.image.load('png/Tiles/14.png')
+        self.rect = self.image.get_rect()
+        # attributes to move platform
+        self.rect.x = xstart
+        self.rect.y = ystart
+        self.xend = xend
+        self.yend = yend
+        self.xvel = xvel
+        self.yvel = yvel
+        self.moveCount = 0
+        self.xpath = [self.rect.x, self.xend]
+        self.ypath = [self.rect.y, self.yend]
+
+
+    def draw(self, win):
+        self.move()
+
+    def move(self):
+        # move the platform based on x/y velocity and path
+        if self.xvel > 0:
+            if self.rect.x + self.xvel < self.xpath[1]:
+                self.rect.x += self.xvel
+            else:
+                self.xvel *= -1
+        else:
+            if self.rect.x - self.xvel > self.xpath[0]:
+                self.rect.x += self.xvel
+            else:
+                self.xvel *= -1
+
+        if self.yvel > 0:
+            if self.rect.y + self.yvel < self.ypath[1]:
+                self.rect.y += self.yvel
+            else:
+                self.yvel *= -1
+        else:
+            if self.rect.y - self.yvel > self.ypath[0]:
+                self.rect.y += self.yvel
+            else:
+                self.yvel *= -1
