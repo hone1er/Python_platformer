@@ -1,6 +1,8 @@
 from characters import Enemy, MovingPlatform
 import constants
+import random
 import pygame
+import os
 
 
 # Set the height and width of the screen
@@ -71,9 +73,9 @@ class Level():
 
         # Draw all the sprite lists that we have
         self.platform_list.draw(screen)
+        self.platform_scene.draw(screen)
         self.wall_list.draw(screen)
         self.enemy_list.draw(screen)
-        self.platform_scene.draw(screen)
         self.collectable_list.draw(screen)
 
 
@@ -142,8 +144,15 @@ class Level():
             obj.image = image                               # object image    
             obj.rect = obj.image.get_rect()       
             obj.rect.x, obj.rect.y  = tile[2], tile[3]      # objectType.x, objType.y
-            objectList.add(obj)                             # add object to objectList
+            objectList.add(obj)                           # add object to objectList
     
+    def add_scenery(tiles, image, objectList, objType):
+        obj = objType(tiles[0], tiles[1])                 # objectType(width, height)
+        obj.image = image                               # object image    
+        obj.rect = obj.image.get_rect()       
+        obj.rect.x, obj.rect.y  = tiles[2], tiles[3]      # objectType.x, objType.y
+        objectList.add(obj)   
+        
     def add_enemy(cronies, objectList):
         # Go through the array above and add platforms
         for crony in cronies:     
@@ -182,15 +191,19 @@ class Level_01(Level):
 
 
             [125, 70, 775, 500],
-            [125, 70, 900, 500]
+            [125, 70, 900, 500],
+
+            [125, 70, 1350, 175],
+            [125, 70, 1475, 175],
         ]
 
         # Moving Platforms
 #####################################################################################
 ###  [ width, height, X, X end, X velocity, Y, Y end, Y velocity]
         movingplatform = [
-            [125, 70, 625, 625, 0, 500, 200, 3],
-            [125, 70, 650, 1050, 3, 50, 50, 3]
+            [125, 70, 625, 625, 0, 500, 200, 4],
+            [125, 70, 650, 1050, 4, 50, 50, 0],
+            [125, 70, 1700, 1700, 0, 175, -400, 4],
             
             ]
 
@@ -211,7 +224,6 @@ class Level_01(Level):
                     [125, 70, -125, 0],
                     [125, 70, -125, -200],
                     ]
-        
         ground_tiles = [[125,30,x*125,575] for x in range(abs(self.level_limit//45))]
         floor_tile = [[125, 70, x*125, 625] for x in range(len(ground_tiles))]
 
@@ -223,6 +235,33 @@ class Level_01(Level):
         mushroom_2 = [[0, 0, 625, 540]
                       ]
 
+        object_tiles = [[125,30,x*300+550,525] for x in range(abs(self.level_limit//45))]
+        scenery = os.listdir(f'{os.path.dirname(__file__)}/png/Object')
+        # Add backround objects such as trees, bushes, and rocks.
+        for tile in object_tiles:
+            image = f'{os.path.dirname(__file__)}/png/Object/{random.choice(scenery)}'
+            if "Mushroom" not in image:
+                if "Tree_1" in image:
+                    tile[3] += 7
+                elif "Tree_2" in image:
+                    tile[3] -= 250
+                elif "Tree_3" in image:
+                    tile[3] -= 225
+                elif "Crate" in image:
+                    tile[3] -= 27
+                elif "BigBush" in image:
+                    tile[3] -= 15
+                elif "SmallBush" in image:
+                    tile[3] += 10
+                elif "Sign" in image:
+                    tile[3] -= 15
+                elif "Stone" in image:
+                    tile[3] -= 4
+                image = pygame.image.load(image)
+                Level.add_scenery(tile, image, self.platform_scene, Platform)
+
+        for scene in scenery:
+            print(scene)
         #### wall at start of levels and ground tiles
         wall_dict = {
                 pygame.image.load('png/Tiles/10.png'): end_tile_1,
@@ -230,6 +269,7 @@ class Level_01(Level):
                 pygame.image.load('png/Tiles/8.png'): floor_tile,
                 pygame.image.load('png/Tiles/14.png'): ground_tiles,
                 }
+        
 
         platforms_dict = {
                 pygame.image.load('png/Tiles/14.png'): center_tiles
