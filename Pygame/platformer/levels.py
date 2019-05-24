@@ -48,7 +48,6 @@ class Level():
         self.enemy_list = pygame.sprite.Group()
         self.collectable_list = pygame.sprite.Group()
         self.player = player
-    
 
         # How far this world has been scrolled left/right
         self.world_shift = 0
@@ -78,13 +77,9 @@ class Level():
         self.enemy_list.draw(screen)
         self.collectable_list.draw(screen)
 
-
-
     def shift_world(self, shift_x):
         """ When the user moves left/right and we need to scroll
         everything: """
-
-
         # Keep track of the shift amount
         self.world_shift += shift_x
 
@@ -104,15 +99,13 @@ class Level():
                     item.xend += shift_x
                     item.xpath[0] += shift_x
                     item.xpath[1] += shift_x
-
  
         for enemy in self.enemy_list:
             enemy.end += shift_x
             enemy.rect.x += shift_x
             enemy.path[0] += shift_x
             enemy.path[1] += shift_x
-        
-    
+         
     def shift_world_y(self, shift_y):
         
         # Keep track of the shift amount
@@ -134,9 +127,7 @@ class Level():
                     item.yend -= shift_y
                     item.ypath[0] -= shift_y
                     item.ypath[1] -= shift_y
-
-
-    
+ 
     def add_item(tiles, image, objectList, objType):
         # Go through the array above and add platforms
         for tile in tiles:                                  # tiles is a dictionary containing {image: object}
@@ -165,8 +156,6 @@ class Level():
         objectList.add(obj) 
 
 
-
-
 class Level_01(Level):
     """ Definition for level 1. """
 
@@ -181,14 +170,8 @@ class Level_01(Level):
         # Array with type of platform, and x, y location of the platform.
         center_tiles = [
             [125, 70, 0, 500],
-            [125, 70, 125, 500],
 
-            [125, 70, 350, 500],
-            [125, 70, 475, 500],
-
-            [125, 70, 325, 150],
             [125, 70, 450, 150],
-
 
             [125, 70, 775, 500],
             [125, 70, 900, 500],
@@ -201,8 +184,8 @@ class Level_01(Level):
 #####################################################################################
 ###  [ width, height, X, X end, X velocity, Y, Y end, Y velocity]
         movingplatform = [
-            [125, 70, 625, 625, 0, 500, 200, 4],
-            [125, 70, 650, 1050, 4, 50, 50, 0],
+            [125, 70, 625, 625, 0, 500, 200, 3.5],
+            [125, 70, 650, 1050, 3.5, 50, 50, 0],
             [125, 70, 1700, 1700, 0, 175, -400, 4],
             
             ]
@@ -229,13 +212,14 @@ class Level_01(Level):
 
 
         mushroom_1 = [[125, 70, 25, 465],
-                      [64, 64, 375, 115]
+                      [64, 64, 440, 115]
                       
                     ]
         mushroom_2 = [[0, 0, 625, 540]
                       ]
 
-        object_tiles = [[125,30,x*300+550,525] for x in range(abs(self.level_limit//45))]
+        object_tiles = [[125,30,x*450*random.choice([1.5,3.5,2.5])+350,525] for x in range(abs(self.level_limit//45))]
+
         scenery = os.listdir(f'{os.path.dirname(__file__)}/png/Object')
         # Add backround objects such as trees, bushes, and rocks.
         for tile in object_tiles:
@@ -366,8 +350,6 @@ class Level_02(Level):
                         [125, 70, 4500, 550],
                         [125, 70, 4625, 550],
                         [125, 70, 4750, 550],
-                        
-
                       ]
 
 
@@ -424,7 +406,6 @@ class Level_02(Level):
             [125, 70, 3600, 4200, 3, 500, 500, 0],
             ]
 
-
 # Dictionaries with images: objects
 #####################################################################################
         tile_dict = {pygame.image.load('png/Tiles/1.png'): ground_tiles,
@@ -459,5 +440,3 @@ class Level_02(Level):
 
         # add enemies
         Level.add_enemy(cronies, self.enemy_list)
-# Create platforms for the level
-

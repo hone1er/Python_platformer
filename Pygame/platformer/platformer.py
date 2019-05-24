@@ -51,11 +51,11 @@ class Game:
                 elif event.type == None:
                     player.idle()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                         player.go_left()
-                    elif event.key == pygame.K_RIGHT:
+                    elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         player.go_right()
-                    elif event.key == pygame.K_UP:
+                    elif event.key == pygame.K_w or event.key == pygame.K_UP:
                         player.jump()
                     elif event.key == pygame.K_SPACE:
                         if len(player.bullet_list) < 4:
@@ -69,9 +69,9 @@ class Game:
 
                 # set what happens when player lets the key up
                 elif event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT and player.change_x < 0:
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT and player.change_x < 0:
                         player.stop()
-                    elif event.key == pygame.K_RIGHT and player.change_x > 0:
+                    elif event.key == pygame.K_d or event.key == pygame.K_RIGHT and player.change_x > 0:
                         player.stop()
 
 
@@ -144,7 +144,6 @@ class Game:
             clock.tick(60)
             # Go ahead and update the screen with what we've drawn.
             pygame.display.update()
-            print(player.rect.x - player.level.world_shift, player.rect.y)
         # Be IDLE friendly. If you forget this line, the program will 'hang'
         # on exit.
         pygame.quit()
@@ -216,5 +215,3 @@ if __name__ == "__main__":
     game = Game()
     #game_intro(game)
     game.main()
-
-    
