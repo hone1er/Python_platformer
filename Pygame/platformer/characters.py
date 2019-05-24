@@ -1,6 +1,6 @@
 from sheet_helper import SpriteSheet
-import pygame
 import constants
+import pygame
 import images
 
 
@@ -81,6 +81,8 @@ class Player(pygame.sprite.Sprite):
             elif isinstance(block, MovingPlatform) == False and self.change_x < 0:
                 # Otherwise if we are moving left, do the opposite.
                 self.rect.left = block.rect.right
+                
+            
  
         # Move up/down
         self.rect.y += self.change_y
@@ -91,9 +93,19 @@ class Player(pygame.sprite.Sprite):
         for block in block_hit_list:
  
             # Reset our position based on the top/bottom of the object.
-            if self.change_y > 0 and self.rect.top < block.rect.top:
-                self.rect.bottom = block.rect.top
+            if self.change_y > 0 and self.rect.top + 10 < block.rect.top:
+                self.rect.bottom = block.rect.top  + 5
                 self.change_y = 0
+
+                        # if the block is a moving platform, add the blocks x/y velocity to the players x/y velocity 
+            if isinstance(block, MovingPlatform) and self.rect.top + 10 < block.rect.top:
+                if block.xvel > 0:
+                    self.rect.x += block.xvel
+                if block.xvel < 0:
+                    self.rect.x += block.xvel
+
+
+
 
 
         wall_hit_list = pygame.sprite.spritecollide(self, self.level.wall_list, False)
@@ -108,17 +120,6 @@ class Player(pygame.sprite.Sprite):
 
             # Stop our vertical movement
             self.change_y = 0
-
-            # if the block is a moving platform, add the blocks x/y velocity to the players x/y velocity 
-            if isinstance(block, MovingPlatform):
-                if block.xvel > 0:
-                    self.rect.x += block.xvel
-                if block.xvel < 0:
-                    self.rect.x += block.xvel
-                if block.yvel > 0:
-                    self.rect.y += block.yvel
-                if block.yvel < 0:
-                    self.rect.y -= block.yvel
 
         # subtract 25 points if player runs into enemy
         enemy_hit_list = pygame.sprite.spritecollide(self, self.level.enemy_list, False)
@@ -163,22 +164,29 @@ class Player(pygame.sprite.Sprite):
         platform_side_hit_list_l = pygame.sprite.spritecollide(self, self.level.wall_list, False)
         self.rect.x += 2
 
+        for block in platform_hit_list:
+            if self.rect.top < block.rect.top - 10:
 
-        # If it is ok to jump, set our speed upwards
-        if len(platform_hit_list) > 0 or len(wall_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
+                # If it is ok to jump, set our speed upwards
+                if len(platform_hit_list) > 0 or len(wall_hit_list) > 0:
+                    self.change_y = -10
+                    self.r_jump = 0
+                    self.l_jump = 0
+                # If it is ok to jump, set our speed upwards
+        if len(wall_hit_list) > 0:
             self.change_y = -10
             self.r_jump = 0
             self.l_jump = 0
 
 
         # wall jump
-        if len(platform_side_hit_list_r) > 0 and self.r_jump == 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
+        if len(platform_side_hit_list_r) > 0 and self.r_jump == 0:
             self.change_y = -10
             self.r_jump += 1
             self.l_jump = 0
 
         # wall jump
-        if len(platform_side_hit_list_l) > 0 and self.l_jump == 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
+        if len(platform_side_hit_list_l) > 0 and self.l_jump == 0:
             self.change_y = -10
             self.l_jump += 1
             self.r_jump = 0

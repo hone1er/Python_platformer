@@ -144,6 +144,7 @@ class Game:
             clock.tick(60)
             # Go ahead and update the screen with what we've drawn.
             pygame.display.update()
+            print(player.rect.x - player.level.world_shift, player.rect.y)
         # Be IDLE friendly. If you forget this line, the program will 'hang'
         # on exit.
         pygame.quit()
@@ -213,6 +214,7 @@ def game_intro(game):
 
 if __name__ == "__main__":
     game = Game()
-    game_intro(game)
+    #game_intro(game)
+    game.main()
 
     

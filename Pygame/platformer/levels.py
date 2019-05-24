@@ -1,6 +1,6 @@
-import pygame
-import constants
 from characters import Enemy, MovingPlatform
+import constants
+import pygame
 
 
 # Set the height and width of the screen
@@ -173,19 +173,35 @@ class Level_01(Level):
         center_tiles = [
             [125, 70, 0, 500],
             [125, 70, 125, 500],
-            [125, 70, 500, 500],
-            [125, 70, 625, 300],
-            [125, 70, 750, 500]
+
+            [125, 70, 350, 500],
+            [125, 70, 475, 500],
+
+            [125, 70, 325, 150],
+            [125, 70, 450, 150],
+
+
+            [125, 70, 775, 500],
+            [125, 70, 900, 500]
         ]
 
-
+        # Moving Platforms
+#####################################################################################
+###  [ width, height, X, X end, X velocity, Y, Y end, Y velocity]
+        movingplatform = [
+            [125, 70, 625, 625, 0, 500, 200, 3],
+            [125, 70, 650, 1050, 3, 50, 50, 3]
+            
+            ]
 
         # Wall at start of level
         end_tile_1 = [
-                     [125, 70, -125, 560],
-                     [125, 70, -125, 320],
-                     [125, 70, -125, 80],
-                     [125, 70, -125, 680]
+                     [125, 70, -125, 675],
+                     [125, 70, -125, 565],
+                     [125, 70, -125, 315],
+                     [125, 70, -125, 85],
+                     [125, 70, -125, -104],
+                     [125, 70, -125, -300],
                      ]
 
         # Wall at start of level continued
@@ -193,6 +209,7 @@ class Level_01(Level):
                     [125, 70, -125, 440],
                     [125, 70, -125, 200],
                     [125, 70, -125, 0],
+                    [125, 70, -125, -200],
                     ]
         
         ground_tiles = [[125,30,x*125,575] for x in range(abs(self.level_limit//45))]
@@ -200,7 +217,7 @@ class Level_01(Level):
 
 
         mushroom_1 = [[125, 70, 25, 465],
-                      [64, 64, 675, 260]
+                      [64, 64, 375, 115]
                       
                     ]
         mushroom_2 = [[0, 0, 625, 540]
@@ -226,7 +243,9 @@ class Level_01(Level):
 
         for platform in platforms_dict:
             Level.add_item(platforms_dict[platform], platform, self.platform_list, Platform)
-
+            
+        for platform in movingplatform:
+            Level.add_movingPlatform(platform, self.platform_list)
                 # Add collectables
         for collectable in collectable_dict:
             Level.add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
