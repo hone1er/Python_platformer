@@ -167,6 +167,12 @@ class Level_01(Level):
 
         self.level_limit = -4000
 
+        # cronies list....[startX, Y, width, height, endX]
+        #####################################################################################
+        cronies = [
+            [800, 475, 20, 20, 1000],
+            [1400, 150, 20, 20, 1575]]
+
         # Array with type of platform, and x, y location of the platform.
         center_tiles = [
             [125, 70, 0, 500],
@@ -178,7 +184,58 @@ class Level_01(Level):
 
             [125, 70, 1350, 175],
             [125, 70, 1475, 175],
+
+            [125, 70, 1950, -400],
+            [125, 70, 2075, -400],
+            [125, 70, 2200, -400],
+
+            [125, 70, 2350, -500],
+            [125, 70, 2475, -500],
+            [125, 70, 2600, -500],
+
+            [125, 70, 2750, -400],
+            [125, 70, 2875, -400],
+            [125, 70, 3000, -400],
+            [125, 70, 3125, -400],
+            [125, 70, 3250, -400],
+            [125, 70, 3375, -400],
+
+            [125, 70, 3500, -200],
+            [125, 70, 3625, -200],
+            [125, 70, 3750, -200],
+            [125, 70, 3875, -200],
+            [125, 70, 4000, -200],
+            [125, 70, 4125, -200],
+
+            [125, 70, 1700, 440],
+            [125, 70, 1825, 440],
+            [125, 70, 1950, 440],
+            [125, 70, 2075, 340],
+            [125, 70, 2200, 340],
+            [125, 70, 2325, 340],
+            [125, 70, 2450, 440],
+            [125, 70, 2575, 440],
+            [125, 70, 2700, 440],
+
         ]
+
+        columns = [            
+            [125, 70, 1700, 500],
+            [125, 70, 1825, 500],
+            [125, 70, 1950, 500],
+            [125, 70, 2075, 400],
+            [125, 70, 2200, 400],
+            [125, 70, 2325, 400],
+            [125, 70, 2075, 500],
+            [125, 70, 2200, 500],
+            [125, 70, 2325, 500],
+            [125, 70, 2450, 500],
+            [125, 70, 2575, 500],
+            [125, 70, 2700, 500],
+            ]
+
+        for column in columns:
+            Level.add_scenery(column, pygame.image.load('png/Tiles/8.png'), self.platform_scene, Platform)
 
         # Moving Platforms
 #####################################################################################
@@ -186,8 +243,7 @@ class Level_01(Level):
         movingplatform = [
             [125, 70, 625, 625, 0, 500, 200, 3.5],
             [125, 70, 650, 1050, 3.5, 50, 50, 0],
-            [125, 70, 1700, 1700, 0, 175, -400, 4],
-            
+            [125, 70, 1700, 1700, 0, 175, -400, 4],         
             ]
 
         # Wall at start of level
@@ -207,6 +263,7 @@ class Level_01(Level):
                     [125, 70, -125, 0],
                     [125, 70, -125, -200],
                     ]
+
         ground_tiles = [[125,30,x*125,575] for x in range(abs(self.level_limit//45))]
         floor_tile = [[125, 70, x*125, 625] for x in range(len(ground_tiles))]
 
@@ -244,8 +301,6 @@ class Level_01(Level):
                 image = pygame.image.load(image)
                 Level.add_scenery(tile, image, self.platform_scene, Platform)
 
-        for scene in scenery:
-            print(scene)
         #### wall at start of levels and ground tiles
         wall_dict = {
                 pygame.image.load('png/Tiles/10.png'): end_tile_1,
@@ -273,8 +328,8 @@ class Level_01(Level):
                 # Add collectables
         for collectable in collectable_dict:
             Level.add_item(collectable_dict[collectable], collectable, self.collectable_list, Mushroom)
-
-            
+        # add enemies
+        Level.add_enemy(cronies, self.enemy_list)            
 
 
 # Create platforms for the level
