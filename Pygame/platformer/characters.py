@@ -66,7 +66,6 @@ class Player(pygame.sprite.Sprite):
 
 
         
-    
         # See if we hit anything
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         wall_hit_list = pygame.sprite.spritecollide(self, self.level.wall_list, False)
@@ -82,7 +81,6 @@ class Player(pygame.sprite.Sprite):
                 # Otherwise if we are moving left, do the opposite.
                 self.rect.left = block.rect.right
                 
-            
  
         # Move up/down
         self.rect.y += self.change_y
@@ -103,9 +101,6 @@ class Player(pygame.sprite.Sprite):
                     self.rect.x += block.xvel
                 if block.xvel < 0:
                     self.rect.x += block.xvel
-
-
-
 
 
         wall_hit_list = pygame.sprite.spritecollide(self, self.level.wall_list, False)
